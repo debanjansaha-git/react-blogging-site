@@ -1,0 +1,54 @@
+{
+  "posts": [
+    {
+      "slug": "example-post",
+      "content": "---\ntitle: \"Example Post\"\ndate: \"2023-06-01\"\nskills: [\"React\", \"Markdown\"]\n---\n\nThis is an example blog post written in Markdown.\n\n## Subheading\n\n- List item 1\n- List item 2\n\n[Link to more info](https://example.com)\n"
+    },
+    {
+      "slug": "project-1",
+      "content": "---\ntitle: \"Machine Learning for Customer Churn Prediction\"\ndate: \"2023-06-01\"\nskills: [\"Python\", \"Scikit-learn\", \"Data Analysis\"]\n---\n\n# Machine Learning for Customer Churn Prediction\n\n## Project Overview\n\nIn this project, I developed a machine learning model to predict customer churn for a telecommunications company. By analyzing historical customer data, we were able to identify key factors contributing to churn and build a predictive model with 85% accuracy.\n\n## Key Achievements\n\n- Processed and analyzed a dataset of 50,000 customer records\n- Implemented feature engineering techniques to improve model performance\n- Utilized Random Forest and Gradient Boosting algorithms for prediction\n- Deployed the model as a web service for real-time predictions\n\n## Technologies Used\n\n- Python\n- Pandas for data manipulation\n- Scikit-learn for machine learning algorithms\n- Flask for API development\n- Docker for containerization\n\n## Impact\n\nThe model helped the company reduce churn by 20% over six months, resulting in an estimated $2 million in retained revenue.\n"
+    },
+    {
+      "slug": "project-2",
+      "content": "---\ntitle: \"Deep Learning for Image Classification\"\ndate: \"2023-07-15\"\nskills: [\"Python\", \"TensorFlow\", \"Computer Vision\"]\n---\n\n# Deep Learning for Image Classification\n\n## Project Overview\n\nThis project involved building a deep learning model for classifying images of different dog breeds. The model was trained on a dataset of over 10,000 images spanning 120 different dog breeds.\n\n## Key Achievements\n\n- Implemented a Convolutional Neural Network (CNN) using TensorFlow and Keras\n- Achieved 92% accuracy on the test set\n- Utilized data augmentation techniques to improve model generalization\n- Deployed the model as a mobile app for real-time breed identification\n\n## Technologies Used\n\n- Python\n- TensorFlow and Keras for deep learning\n- OpenCV for image preprocessing\n- Flutter for mobile app development\n\n## Impact\n\nThe resulting mobile app has been downloaded over 50,000 times and has an average rating of 4.7 stars on the App Store.\n"
+    },
+    {
+      "slug": "project-3",
+      "content": "---\ntitle: \"Natural Language Processing for Sentiment Analysis\"\ndate: \"2023-08-30\"\nskills: [\"Python\", \"NLTK\", \"Transformers\"]\n---\n\n# Natural Language Processing for Sentiment Analysis\n\n## Project Overview\n\nIn this project, I developed a sentiment analysis model to classify customer reviews for an e-commerce platform. The model can determine whether a review is positive, negative, or neutral.\n\n## Key Achievements\n\n- Preprocessed and tokenized over 100,000 customer reviews\n- Implemented both traditional machine learning (Naive Bayes) and deep learning (BERT) approaches\n- Achieved 91% accuracy with the BERT model\n- Created a dashboard for real-time sentiment monitoring\n\n## Technologies Used\n\n- Python\n- NLTK for text preprocessing\n- Hugging Face Transformers for BERT implementation\n- Streamlit for dashboard creation\n\n## Impact\n\nThe sentiment analysis tool has helped the e-commerce platform improve its customer service response time by 30% and increase customer satisfaction scores by 15%.\n"
+    },
+    {
+      "slug": "project-4",
+      "content": "---\ntitle: \"Copy of Natural Language Processing for Sentiment Analysis\"\ndate: \"2023-08-30\"\nskills: [\"Python\", \"NLTK\", \"Transformers\"]\n---\n\n# Copy of Natural Language Processing for Sentiment Analysis\n\n## Project Overview\n\nIn this project, I developed a sentiment analysis model to classify customer reviews for an e-commerce platform. The model can determine whether a review is positive, negative, or neutral.\n\n## Key Achievements\n\n- Preprocessed and tokenized over 100,000 customer reviews\n- Implemented both traditional machine learning (Naive Bayes) and deep learning (BERT) approaches\n- Achieved 91% accuracy with the BERT model\n- Created a dashboard for real-time sentiment monitoring\n\n## Technologies Used\n\n- Python\n- NLTK for text preprocessing\n- Hugging Face Transformers for BERT implementation\n- Streamlit for dashboard creation\n\n## Impact\n\nThe sentiment analysis tool has helped the e-commerce platform improve its customer service response time by 30% and increase customer satisfaction scores by 15%.\n"
+    },
+    {
+      "slug": "project-5",
+      "content": "---\ntitle: \"Project with Embedded Gist\"\ndate: \"2023-06-15\"\nskills: [\"React\", \"Markdown\", \"GitHub Gist\"]\n---\n\n# Project with Embedded Gist\n\nThis project demonstrates how to embed a GitHub Gist in a Markdown file.\n\n## Embedded Gist\n\nBelow is the embedded Gist:\n\n[gist:https://gist.github.com/bvdalling/93aab8a64030021b0ee99586064fe39a]\n\n## More Content\n\nYou can add more content here...\n"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1729277737793,
+      "slug": "project-1",
+      "author": "Deb",
+      "content": "Test 1",
+      "createdAt": "2024-10-18T18:55:37.793Z"
+    },
+    {
+      "id": 1729277750647,
+      "slug": "project-1",
+      "author": "Deb",
+      "content": "Another Comment",
+      "createdAt": "2024-10-18T18:55:50.647Z"
+    },
+    {
+      "id": 1729277763675,
+      "slug": "project-1",
+      "author": "Bomb",
+      "content": "Bombard",
+      "createdAt": "2024-10-18T18:56:03.675Z"
+    }
+  ],
+  "likes": {
+    "project-1": 8
+  }
+}
