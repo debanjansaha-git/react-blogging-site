@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer components {
+  .btn-primary {
+    @apply inline-block text-center bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition duration-300 transform hover:scale-105 shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply inline-block text-center bg-secondary-500 text-white px-6 py-3 rounded-lg hover:bg-secondary-600 transition duration-300 transform hover:scale-105 shadow-md;
+  }
+}
+
+/* You can add any additional custom styles here */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Add this to your existing styles */
+
+.markdown-content h1 {
+  @apply text-3xl font-bold mt-6 mb-4;
+}
+
+.markdown-content h2 {
+  @apply text-2xl font-bold mt-5 mb-3;
+}
+
+.markdown-content h3 {
+  @apply text-xl font-bold mt-4 mb-2;
+}
+
+.markdown-content p {
+  @apply mb-4;
+}
+
+.markdown-content ul, .markdown-content ol {
+  @apply mb-4 pl-5;
+}
+
+.markdown-content li {
+  @apply mb-2;
+}
+
+.markdown-content a {
+  @apply text-blue-600 hover:underline;
+}
+
+.markdown-content pre {
+  @apply bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+}
+
+.markdown-content code {
+  @apply font-mono text-sm;
+}
