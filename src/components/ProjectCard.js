@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaHeart, FaComment } from 'react-icons/fa';
 
-function ProjectCard({ slug, title, content, skills, imageUrl, onSkillClick }) {
+function ProjectCard({ id, slug, title, content, skills, imageUrl, likes, comments, onSkillClick }) {
   // Function to strip HTML tags and limit the preview to 100 characters
   const getContentPreview = (content) => {
     const strippedContent = content.replace(/<[^>]+>/g, '');
@@ -44,9 +45,21 @@ function ProjectCard({ slug, title, content, skills, imageUrl, onSkillClick }) {
             </span>
           ))}
         </div>
-        <Link to={`/projects/${slug}`} className="text-blue-600 hover:text-blue-800">
-          Read more
-        </Link>
+        <div className="flex justify-between items-center mt-4">
+          <Link to={`/projects/${slug}`} className="text-blue-600 hover:text-blue-800">
+            Read more
+          </Link>
+          <div className="flex items-center space-x-4">
+            <span className="flex items-center">
+              <FaHeart className="text-red-500 mr-1" />
+              {likes ? likes.length : 0}
+            </span>
+            <span className="flex items-center">
+              <FaComment className="text-gray-500 mr-1" />
+              {comments ? comments.length : 0}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

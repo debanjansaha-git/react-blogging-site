@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, where, arrayUnion, arrayRemove, orderBy, limit, startAfter } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import { db, auth, storage } from '../firebase';
 
@@ -99,6 +99,71 @@ export const deletePost = async (id, imageUrl) => {
     }
   } catch (error) {
     console.error('Error deleting document or image:', error);
+    throw error;
+  }
+};
+
+export const likePost = async (postId, userId) => {
+  const postRef = doc(db, 'posts', postId);
+  await updateDoc(postRef, {
+    likes: arrayUnion(userId)
+  });
+};
+
+export const unlikePost = async (postId, userId) => {
+  const postRef = doc(db, 'posts', postId);
+  await updateDoc(postRef, {
+    likes: arrayRemove(userId)
+  });
+};
+
+export const addComment = async (projectId, commentData) => {
+  try {
+    const projectRef = doc(db, 'posts', projectId);
+    await updateDoc(projectRef, {
+      comments: arrayUnion(commentData)
+    });
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+export const addReplyToComment = async (projectId, parentCommentId, replyData) => {
+  const projectRef = doc(db, 'posts', projectId);
+  await updateDoc(projectRef, {
+    [`comments.${parentCommentId}.replies`]: arrayUnion(replyData)
+  });
+};
+
+export const likeComment = async (projectId, commentId, userId) => {
+  const projectRef = doc(db, 'posts', projectId);
+  await updateDoc(projectRef, {
+    [`comments.${commentId}.likes`]: arrayUnion(userId)
+  });
+};
+
+export const unlikeComment = async (projectId, commentId, userId) => {
+  const projectRef = doc(db, 'posts', projectId);
+  await updateDoc(projectRef, {
+    [`comments.${commentId}.likes`]: arrayRemove(userId)
+  });
+};
+
+export const getComments = async (projectId) => {
+  try {
+    const projectRef = doc(db, 'posts', projectId);
+    const projectDoc = await getDoc(projectRef);
+    
+    if (projectDoc.exists()) {
+      const projectData = projectDoc.data();
+      return projectData.comments || [];
+    } else {
+      console.log("No such document!");
+      return [];
+    }
+  } catch (error) {
+    console.error('Error getting comments:', error);
     throw error;
   }
 };

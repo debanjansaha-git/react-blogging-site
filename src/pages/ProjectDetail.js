@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import DOMPurify from 'dompurify';
-import { FaEdit, FaTrash, FaLinkedin, FaYoutube, FaMedium, FaGithub } from 'react-icons/fa';
-import { getPostBySlug, deletePost } from '../services/blogService';
+import { FaEdit, FaTrash, FaLinkedin, FaYoutube, FaMedium, FaGithub, FaHeart, FaComment, FaShare } from 'react-icons/fa';
+import { getPostBySlug, deletePost, likePost, unlikePost } from '../services/blogService';
+import CommentSection from '../components/CommentSection';
 
 function ProjectDetail() {
   const [project, setProject] = useState(null);
@@ -13,6 +14,7 @@ function ProjectDetail() {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
   const location = useLocation();
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -32,7 +34,11 @@ function ProjectDetail() {
       // Clear the message after 3 seconds
       setTimeout(() => setMessage(''), 3000);
     }
-  }, [slug, navigate, location]);
+
+    if (user && project) {
+      setLiked(project.likes && project.likes.includes(user.uid));
+    }
+  }, [slug, navigate, location, user, project]);
 
   const handleDelete = async () => {
     const isConfirmed = window.confirm('Are you sure you want to delete this project? This action cannot be undone.');
@@ -47,6 +53,38 @@ function ProjectDetail() {
         console.error('Error deleting project:', error);
         setMessage('Error deleting project. Please try again.');
       }
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user) {
+      // Prompt user to log in
+      return;
+    }
+    if (liked) {
+      await unlikePost(project.id, user.uid);
+    } else {
+      await likePost(project.id, user.uid);
+    }
+    setLiked(!liked);
+    // Refetch project to update like count
+    const updatedProject = await getPostBySlug(slug);
+    setProject(updatedProject);
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: project.title,
+        text: 'Check out this project!',
+        url: window.location.href,
+      })
+        .then(() => console.log('Successful share'))
+        .catch((error) => console.log('Error sharing', error));
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      // You could show a modal with share options here
+      console.log('Web Share not supported');
     }
   };
 
@@ -113,10 +151,29 @@ function ProjectDetail() {
         )}
       </div>
       
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex space-x-4">
+          <button onClick={handleLike} className={`flex items-center ${liked ? 'text-red-500' : 'text-gray-500'}`}>
+            <FaHeart className="mr-2 text-2xl" /> {/* Increased icon size */}
+            {project.likes ? project.likes.length : 0}
+          </button>
+          <button className="flex items-center text-gray-500">
+            <FaComment className="mr-2 text-2xl" /> {/* Increased icon size */}
+            {project.comments ? project.comments.length : 0}
+          </button>
+          <button onClick={handleShare} className="flex items-center text-gray-500">
+            <FaShare className="mr-2 text-2xl" /> {/* Increased icon size */}
+            Share
+          </button>
+        </div>
+      </div>
+      
       <div 
         className="prose prose-lg max-w-none"
         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.content) }}
       />
+      
+      <CommentSection projectId={project.id} />
     </div>
   );
 }
