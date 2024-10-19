@@ -124,3 +124,95 @@ code {
 .prose code {
   @apply font-mono text-sm bg-gray-100 px-1 py-0.5 rounded;
 }
+
+/* Dark mode styles */
+.dark {
+  @apply bg-gray-900 text-white;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800;
+}
+
+.dark .text-gray-800 {
+  @apply text-gray-200;
+}
+
+/* Add these styles at the end of your existing CSS */
+
+.featured-projects-slider .slick-slide {
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.featured-projects-slider .slick-slide.slick-active {
+  opacity: 1;
+}
+
+.featured-projects-slider .slick-prev,
+.featured-projects-slider .slick-next {
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.featured-projects-slider .slick-prev:hover,
+.featured-projects-slider .slick-next:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.featured-projects-slider .slick-prev:before,
+.featured-projects-slider .slick-next:before {
+  color: #333;
+  font-size: 20px;
+}
+
+.featured-projects-slider .slick-prev {
+  left: -50px;
+}
+
+.featured-projects-slider .slick-next {
+  right: -50px;
+}
+
+@media (max-width: 1024px) {
+  .featured-projects-slider .slick-prev {
+    left: -30px;
+  }
+  .featured-projects-slider .slick-next {
+    right: -30px;
+  }
+}
+
+@media (max-width: 640px) {
+  .featured-projects-slider .slick-prev,
+  .featured-projects-slider .slick-next {
+    display: none !important;
+  }
+}
+
+/* Add these styles to your existing CSS */
+
+.featured-projects .project-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-projects .project-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.featured-projects .project-card .p-4 {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-projects .project-card .text-gray-600 {
+  flex-grow: 1;
+}

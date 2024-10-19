@@ -5,11 +5,28 @@ import Timeline from './Timeline';
 import ProjectCard from './ProjectCard';
 import SocialMediaFeed from './SocialMediaFeed';
 import { getPosts } from '../services/blogService';
+import { FaPython, FaDatabase, FaChartBar, FaBrain } from 'react-icons/fa';
+import { SiTensorflow, SiPytorch, SiScikitlearn, SiKeras, SiOpencv, SiPandas, SiNumpy, SiJupyter } from 'react-icons/si';
 
 function Home() {
   const [projects, setProjects] = useState([]);
   const typedRef = useRef(null);
   const el = useRef(null);
+
+  const skills = [
+    { name: 'Python', icon: FaPython, level: 95, color: '#3776AB' },
+    { name: 'TensorFlow', icon: SiTensorflow, level: 90, color: '#FF6F00' },
+    { name: 'PyTorch', icon: SiPytorch, level: 85, color: '#EE4C2C' },
+    { name: 'Scikit-learn', icon: SiScikitlearn, level: 90, color: '#F7931E' },
+    { name: 'Keras', icon: SiKeras, level: 85, color: '#D00000' },
+    { name: 'OpenCV', icon: SiOpencv, level: 80, color: '#5C3EE8' },
+    { name: 'Pandas', icon: SiPandas, level: 95, color: '#150458' },
+    { name: 'NumPy', icon: SiNumpy, level: 95, color: '#013243' },
+    { name: 'Jupyter', icon: SiJupyter, level: 90, color: '#F37626' },
+    { name: 'SQL', icon: FaDatabase, level: 85, color: '#4479A1' },
+    { name: 'Data Visualization', icon: FaChartBar, level: 90, color: '#4B0082' },
+    { name: 'Deep Learning', icon: FaBrain, level: 85, color: '#00BFFF' },
+  ];
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -18,19 +35,18 @@ function Home() {
     };
     fetchProjects();
 
-    const options = {
-      strings: [
-        "I'm a Data Scientist",
-        "I'm a Machine Learning Engineer",
-        "I'm passionate about solving complex problems"
-      ],
-      typeSpeed: 50,
-      backSpeed: 50,
-      loop: true
-    };
-
+    // Typed.js initialization
     if (el.current) {
-      typedRef.current = new Typed(el.current, options);
+      typedRef.current = new Typed(el.current, {
+        strings: [
+          "I'm a Data Scientist",
+          "I'm a Machine Learning Engineer",
+          "I'm passionate about solving complex problems"
+        ],
+        typeSpeed: 50,
+        backSpeed: 50,
+        loop: true
+      });
     }
 
     return () => {
@@ -48,6 +64,7 @@ function Home() {
 
   return (
     <div className="home">
+      {/* Hero Section */}
       <section className="hero min-h-screen flex items-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -59,8 +76,8 @@ function Home() {
               <div className="flex space-x-4">
                 <Link to="/projects" className="btn-primary">
                   View My Projects
-                </Link>
-                <button onClick={handleResumeDownload} className="btn-secondary">
+          </Link>
+          <button onClick={handleResumeDownload} className="btn-secondary">
                   Download Resume
                 </button>
               </div>
@@ -77,22 +94,51 @@ function Home() {
         </div>
       </section>
 
+      {/* Experience Section */}
       <section className="experience py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">My Experience</h2>
+          <h2 className="text-4xl font-bold mb-12 text-center">My Experience</h2>
           <Timeline />
         </div>
       </section>
 
-      <section className="featured-projects py-20 bg-gray-100">
+      {/* Skills Section */}
+      <section className="skills py-20 bg-gray-100">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">Featured Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {projects.slice(0, 3).map((project) => (
-              <ProjectCard key={project.id} {...project} />
+          <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">My AI/ML Skills</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {skills.map((skill, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <skill.icon className="text-5xl mb-4" style={{ color: skill.color }} />
+                <p className="text-lg font-semibold mb-2">{skill.name}</p>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className="h-2.5 rounded-full" 
+                    style={{ width: `${skill.level}%`, backgroundColor: skill.color }}
+                  ></div>
+                </div>
+                <p className="mt-2 text-sm font-medium text-gray-600">{skill.level}%</p>
+              </div>
             ))}
           </div>
-          <div className="text-center">
+        </div>
+      </section>
+
+      {/* Featured Projects Section */}
+      <section className="featured-projects py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold mb-12 text-center">Featured Projects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {projects.map((project) => (
+              <ProjectCard 
+                key={project.id} 
+                {...project} 
+                slug={project.slug}
+                imageUrl={project.imageUrl}
+              />
+            ))}
+          </div>
+          <div className="text-center mt-8">
             <Link to="/projects" className="btn-primary">
               View All Projects
             </Link>
@@ -100,9 +146,10 @@ function Home() {
         </div>
       </section>
 
-      <section className="social-media py-20">
+      {/* Social Media Feed Section */}
+      <section className="social-media py-20 bg-gray-100">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">Latest Updates</h2>
+          <h2 className="text-4xl font-bold mb-12 text-center">Follow Me</h2>
           <SocialMediaFeed />
         </div>
       </section>
