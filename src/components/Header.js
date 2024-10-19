@@ -1,72 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { signOutUser } from './Auth';
 
-function Header({ isLoggedIn, setIsLoggedIn }) {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
+function Header() {
+  const [user] = useAuthState(auth);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await signOutUser();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || location.pathname !== '/' ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
-      <nav className="container mx-auto px-4 flex justify-between items-center">
-        <ul className="flex space-x-8">
-          {[
-            { name: 'Home', path: '/' },
-            { name: 'Projects', path: '/projects' },
-            { name: 'About Me', path: '/about-me' }
-          ].map((item) => (
-            <li key={item.name}>
-              <Link 
-                to={item.path}
-                className={`text-lg font-semibold transition duration-300 ${
-                  isScrolled || location.pathname !== '/' ? 'text-primary-800 hover:text-primary-600' : 'text-white hover:text-primary-200'
-                } ${location.pathname === item.path ? 'border-b-2 border-current' : ''}`}
-              >
-                {item.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
+    <header className="bg-white shadow-md py-4">
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold text-blue-600">My Portfolio</Link>
+        <nav>
+          <ul className="flex space-x-4">
+            <li><Link to="/" className="text-gray-600 hover:text-blue-600">Home</Link></li>
+            <li><Link to="/projects" className="text-gray-600 hover:text-blue-600">Projects</Link></li>
+            <li><Link to="/about-me" className="text-gray-600 hover:text-blue-600">About Me</Link></li>
+            {user && (
+              <li><Link to="/create-project" className="text-gray-600 hover:text-blue-600">Create Project</Link></li>
+            )}
+          </ul>
+        </nav>
         <div>
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition duration-300"
-            >
-              Logout
-            </button>
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <img 
+                src={user.photoURL || 'https://via.placeholder.com/40'} 
+                alt="Profile" 
+                className="w-10 h-10 rounded-full"
+              />
+              <button 
+                onClick={handleLogout}
+                className="text-gray-600 hover:text-blue-600"
+              >
+                Logout
+              </button>
+            </div>
           ) : (
-            <>
-              <Link
-                to="/login"
-                className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition duration-300 mr-2"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="bg-secondary-500 text-white px-4 py-2 rounded-md hover:bg-secondary-600 transition duration-300"
-              >
-                Register
-              </Link>
-            </>
+            <Link to="/login" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Login
+            </Link>
           )}
         </div>
-      </nav>
+      </div>
     </header>
   );
 }

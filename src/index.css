@@ -1,4 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom button styles */
+@layer components {
+  .btn {
+    @apply font-bold py-2 px-4 rounded transition duration-300 ease-in-out;
+  }
+  .btn-primary {
+    @apply btn bg-blue-600 text-white hover:bg-blue-700;
+  }
+  .btn-secondary {
+    @apply btn bg-gray-200 text-gray-800 hover:bg-gray-300;
+  }
+  .btn-success {
+    @apply btn bg-green-500 text-white hover:bg-green-600;
+  }
+  .btn-danger {
+    @apply btn bg-red-500 text-white hover:bg-red-600;
+  }
+}
+
+/* Your custom styles here */
 
 @tailwind base;
 @tailwind components;
