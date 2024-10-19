@@ -91,3 +91,36 @@ code {
 .markdown-content code {
   @apply font-mono text-sm;
 }
+
+/* Add these styles to your existing CSS */
+.prose h2 {
+  @apply text-2xl font-bold mt-8 mb-4 text-primary-800;
+}
+
+.prose h3 {
+  @apply text-xl font-bold mt-6 mb-3 text-primary-700;
+}
+
+.prose p {
+  @apply mb-4 text-gray-700 leading-relaxed;
+}
+
+.prose ul, .prose ol {
+  @apply mb-4 pl-5 text-gray-700;
+}
+
+.prose li {
+  @apply mb-2;
+}
+
+.prose a {
+  @apply text-blue-600 hover:underline;
+}
+
+.prose pre {
+  @apply bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+}
+
+.prose code {
+  @apply font-mono text-sm bg-gray-100 px-1 py-0.5 rounded;
+}
