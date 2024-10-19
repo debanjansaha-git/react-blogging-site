@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { getDoc, doc } from 'firebase/firestore';
+import { getPostBySlug, updatePost } from '../services/blogService';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase';
-import { updatePost } from '../services/blogService';
+import { storage } from '../firebase';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -14,20 +13,26 @@ function EditProject() {
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [mediumUrl, setMediumUrl] = useState('');
+  const [githubUrl, setGithubUrl] = useState('');
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { slug } = useParams();
 
   useEffect(() => {
     const fetchProject = async () => {
       setLoading(true);
-      const docRef = doc(db, 'posts', id);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const projectData = docSnap.data();
+      const projectData = await getPostBySlug(slug);
+      if (projectData) {
         setTitle(projectData.title);
         setContent(projectData.content);
         setSkills(projectData.skills.join(', '));
         setImageUrl(projectData.imageUrl || '');
+        setLinkedinUrl(projectData.linkedinUrl || '');
+        setYoutubeUrl(projectData.youtubeUrl || '');
+        setMediumUrl(projectData.mediumUrl || '');
+        setGithubUrl(projectData.githubUrl || '');
       } else {
         console.log("No such document!");
         navigate('/projects');
@@ -35,7 +40,7 @@ function EditProject() {
       setLoading(false);
     };
     fetchProject();
-  }, [id, navigate]);
+  }, [slug, navigate]);
 
   const modules = {
     toolbar: [
@@ -52,6 +57,7 @@ function EditProject() {
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
       setFile(e.target.files[0]);
+      setImageUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -60,9 +66,9 @@ function EditProject() {
     try {
       let updatedImageUrl = imageUrl;
       if (file) {
-        const storageRef = ref(storage, `project-images/${id}`);
-        await uploadBytes(storageRef, file);
-        updatedImageUrl = await getDownloadURL(storageRef);
+        const storageRef = ref(storage, `project-images/${Date.now()}-${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        updatedImageUrl = await getDownloadURL(snapshot.ref);
       }
 
       const projectData = {
@@ -70,10 +76,16 @@ function EditProject() {
         content,
         skills: skills.split(',').map(skill => skill.trim()),
         imageUrl: updatedImageUrl,
+        linkedinUrl,
+        youtubeUrl,
+        mediumUrl,
+        githubUrl,
         updatedAt: new Date(),
       };
-      await updatePost(id, projectData);
-      navigate(`/projects/${id}`);
+      
+      await updatePost(slug, projectData);
+      console.log("Project updated successfully");
+      navigate(`/projects/${slug}`, { state: { message: 'Project updated successfully' } });
     } catch (error) {
       console.error('Error updating project:', error);
     }
@@ -127,8 +139,48 @@ function EditProject() {
             className="h-96 mb-12" // Increased height
           />
         </div>
+        <div>
+          <label htmlFor="linkedinUrl" className="block text-gray-700 font-bold mb-2">LinkedIn URL</label>
+          <input
+            type="url"
+            id="linkedinUrl"
+            value={linkedinUrl}
+            onChange={(e) => setLinkedinUrl(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="youtubeUrl" className="block text-gray-700 font-bold mb-2">YouTube URL</label>
+          <input
+            type="url"
+            id="youtubeUrl"
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="mediumUrl" className="block text-gray-700 font-bold mb-2">Medium URL</label>
+          <input
+            type="url"
+            id="mediumUrl"
+            value={mediumUrl}
+            onChange={(e) => setMediumUrl(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="githubUrl" className="block text-gray-700 font-bold mb-2">GitHub URL</label>
+          <input
+            type="url"
+            id="githubUrl"
+            value={githubUrl}
+            onChange={(e) => setGithubUrl(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <div className="flex justify-end space-x-4">
-          <Link to={`/projects/${id}`} className="btn-secondary">
+          <Link to={`/projects/${slug}`} className="btn-secondary">
             Cancel
           </Link>
           <button type="submit" className="btn-primary">

@@ -36,7 +36,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
             <Route path="/about-me" element={<AboutMe />} />
             <Route path="/login" element={<Login />} />
             <Route 
@@ -48,7 +48,7 @@ function App() {
               } 
             />
             <Route 
-              path="/edit-project/:id" 
+              path="/edit-project/:slug" 
               element={
                 <ProtectedRoute>
                   <EditProject />

@@ -17,7 +17,7 @@
     @apply btn bg-green-500 text-white hover:bg-green-600;
   }
   .btn-danger {
-    @apply btn bg-red-500 text-white hover:bg-red-600;
+    @apply inline-block text-center bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 transform hover:scale-105 shadow-md;
   }
 }
 
