@@ -1,56 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
-import { signOutUser } from './Auth';
+import { useCheckUserPermissions } from '../services/userService';
 
 function Header() {
   const [user] = useAuthState(auth);
+  const [canCreate, checkingPermissions] = useCheckUserPermissions(user?.uid);
+  const [showCreateProject, setShowCreateProject] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await signOutUser();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
+  useEffect(() => {
+    setShowCreateProject(user && canCreate && !checkingPermissions);
+  }, [user, canCreate, checkingPermissions]);
 
   return (
-    <header className="bg-white shadow-md py-4">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-blue-600">My Portfolio</Link>
-        <nav>
-          <ul className="flex space-x-4">
-            <li><Link to="/" className="text-gray-600 hover:text-blue-600">Home</Link></li>
-            <li><Link to="/projects" className="text-gray-600 hover:text-blue-600">Projects</Link></li>
-            <li><Link to="/about-me" className="text-gray-600 hover:text-blue-600">About Me</Link></li>
-            {user && (
-              <li><Link to="/create-project" className="text-gray-600 hover:text-blue-600">Create Project</Link></li>
+    <header className="bg-white shadow-md">
+      <nav className="container mx-auto px-6 py-3">
+        <div className="flex justify-between items-center">
+          <div className="text-xl font-semibold text-gray-700">
+            <Link to="/">My Portfolio</Link>
+          </div>
+          <div className="flex space-x-4">
+            <Link to="/" className="text-gray-800 hover:text-blue-500">Home</Link>
+            <Link to="/projects" className="text-gray-800 hover:text-blue-500">Projects</Link>
+            <Link to="/about-me" className="text-gray-800 hover:text-blue-500">About Me</Link>
+            {showCreateProject && (
+              <Link to="/create-project" className="text-gray-800 hover:text-blue-500">Create Project</Link>
             )}
-          </ul>
-        </nav>
-        <div>
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <img 
-                src={user.photoURL || 'https://via.placeholder.com/40'} 
-                alt="Profile" 
-                className="w-10 h-10 rounded-full"
-              />
-              <button 
-                onClick={handleLogout}
-                className="text-gray-600 hover:text-blue-600"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link to="/login" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Login
-            </Link>
-          )}
+            {user ? (
+              <button onClick={() => auth.signOut()} className="text-gray-800 hover:text-blue-500">Logout</button>
+            ) : (
+              <Link to="/login" className="text-gray-800 hover:text-blue-500">Login</Link>
+            )}
+          </div>
         </div>
-      </div>
+      </nav>
     </header>
   );
 }
