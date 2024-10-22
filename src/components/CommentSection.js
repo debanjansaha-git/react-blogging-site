@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { addComment, getComments } from '../services/blogService';
@@ -65,14 +65,14 @@ function CommentSection({ projectId }) {
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([]);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     const fetchedComments = await getComments(projectId);
     setComments(fetchedComments);
-  };
+  }, [projectId]);
 
   useEffect(() => {
     fetchComments();
-  }, [projectId, fetchComments]);
+  }, [fetchComments]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
