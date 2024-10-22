@@ -1,8 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ProjectCard from './ProjectCard';
 
 function ProjectList({ projects, expandAll }) {
   const [openDomains, setOpenDomains] = useState([]);
+
+  const groupedProjects = useMemo(() => {
+    return projects.reduce((acc, project) => {
+      const domain = project.domain || 'Miscellaneous';
+      if (!acc[domain]) {
+        acc[domain] = [];
+      }
+      acc[domain].push(project);
+      return acc;
+    }, {});
+  }, [projects]);
 
   useEffect(() => {
     if (expandAll) {
@@ -10,22 +21,13 @@ function ProjectList({ projects, expandAll }) {
     } else {
       setOpenDomains([]);
     }
-  }, [expandAll, groupedProjects]); // Add groupedProjects to the dependency array
+  }, [expandAll, groupedProjects]);
 
   const toggleDomain = (domain) => {
     setOpenDomains(prev => 
       prev.includes(domain) ? prev.filter(d => d !== domain) : [...prev, domain]
     );
   };
-
-  const groupedProjects = projects.reduce((acc, project) => {
-    const domain = project.domain || 'Miscellaneous';
-    if (!acc[domain]) {
-      acc[domain] = [];
-    }
-    acc[domain].push(project);
-    return acc;
-  }, {});
 
   return (
     <div>

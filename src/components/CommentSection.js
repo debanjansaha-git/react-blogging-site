@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import { addComment, getComments } from '../services/blogService';
-import { FaHeart, FaReply } from 'react-icons/fa';
+import { FaReply } from 'react-icons/fa';
 
 function Comment({ comment, onReply, currentUser, level = 0 }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -65,14 +65,14 @@ function CommentSection({ projectId }) {
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([]);
 
-  useEffect(() => {
-    fetchComments();
-  }, [projectId]); // Change postId to projectId
-
   const fetchComments = async () => {
     const fetchedComments = await getComments(projectId);
     setComments(fetchedComments);
   };
+
+  useEffect(() => {
+    fetchComments();
+  }, [projectId, fetchComments]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
