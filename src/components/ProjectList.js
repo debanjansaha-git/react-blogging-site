@@ -10,7 +10,7 @@ function ProjectList({ projects, expandAll }) {
     } else {
       setOpenDomains([]);
     }
-  }, [expandAll]);
+  }, [expandAll, groupedProjects]); // Add groupedProjects to the dependency array
 
   const toggleDomain = (domain) => {
     setOpenDomains(prev => 

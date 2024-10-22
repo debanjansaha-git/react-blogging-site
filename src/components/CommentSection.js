@@ -67,7 +67,7 @@ function CommentSection({ projectId }) {
 
   useEffect(() => {
     fetchComments();
-  }, [projectId]);
+  }, [projectId]); // Change postId to projectId
 
   const fetchComments = async () => {
     const fetchedComments = await getComments(projectId);
