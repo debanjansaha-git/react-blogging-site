@@ -1,28 +1,34 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { signInWithGoogle } from '../components/Auth.js';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
+import { FaGoogle } from 'react-icons/fa';
 
 function Login() {
-  const navigate = useNavigate();
-
-  const handleLogin = async () => {
-    try {
-      await signInWithGoogle();
-      navigate('/');
-    } catch (error) {
-      console.error('Login error:', error);
-    }
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .catch((error) => {
+        console.error("Error signing in with Google: ", error);
+      });
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-5">Login</h2>
-      <button 
-        onClick={handleLogin} 
-        className="btn-primary w-full"
-      >
-        Sign in with Google
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100">
+      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Welcome Back</h2>
+        <button
+          onClick={signInWithGoogle}
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center space-x-2 hover:from-blue-600 hover:to-purple-700 transition duration-300 shadow-md"
+        >
+          <FaGoogle className="text-xl" />
+          <span>Sign in with Google</span>
+        </button>
+        <p className="mt-6 text-center text-gray-600">
+          Don't have an account?{' '}
+          <a href="#" className="text-blue-500 hover:text-blue-600 font-semibold">
+            Sign up
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
