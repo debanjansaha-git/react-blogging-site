@@ -216,3 +216,181 @@ code {
 .featured-projects .project-card .text-gray-600 {
   flex-grow: 1;
 }
+
+/* Add these styles to your global CSS file */
+.blog-content {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.blog-content .ql-editor {
+  padding: 0;
+}
+
+.blog-content p {
+  margin-bottom: 1em;
+}
+
+.blog-content h1 {
+  font-size: 2em;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content h2 {
+  font-size: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content h3 {
+  font-size: 1.17em;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.blog-content ul, .blog-content ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.blog-content li {
+  margin-bottom: 0.5em;
+}
+
+.blog-content a {
+  color: #0000FF;
+  text-decoration: underline;
+}
+
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #ccc;
+  margin-bottom: 1em;
+  padding-left: 1em;
+  color: #666;
+}
+
+.blog-content pre {
+  background-color: #f4f4f4;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1em;
+}
+
+.blog-content code {
+  font-family: monospace;
+  background-color: #f4f4f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+/* Override any inline styles that might be causing issues */
+.blog-content * {
+  line-height: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.blog-content p, .blog-content ul, .blog-content ol, 
+.blog-content h1, .blog-content h2, .blog-content h3, 
+.blog-content h4, .blog-content h5, .blog-content h6 {
+  margin-bottom: 1em !important;
+}
+
+/* Add these styles to your existing CSS */
+.normalize-content {
+  /* Reset all common elements */
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote, pre, figure {
+    all: revert;
+    margin-bottom: 1em;
+  }
+
+  /* Specific element styles */
+  p {
+    margin-top: 0;
+    margin-bottom: 1em;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+  }
+
+  ul, ol {
+    padding-left: 2em;
+    margin-bottom: 1em;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+  }
+
+  /* Force remove any unwanted styles */
+  * {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: inherit !important;
+  }
+
+  /* Re-apply wanted margins */
+  p, ul, ol, h1, h2, h3, h4, h5, h6, blockquote, pre, figure {
+    margin-bottom: 1em !important;
+  }
+
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 1em 0 !important;
+  }
+}
+
+/* Add these styles to your existing CSS */
+.custom-blog-content {
+  line-height: 1.6;
+}
+
+.custom-blog-content p {
+  margin-bottom: 1em;
+}
+
+.custom-blog-content h1,
+.custom-blog-content h2,
+.custom-blog-content h3,
+.custom-blog-content h4,
+.custom-blog-content h5,
+.custom-blog-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.custom-blog-content ul,
+.custom-blog-content ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.custom-blog-content li {
+  margin-bottom: 0.5em;
+}
+
+.custom-blog-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+
+/* Override any inline styles that might be causing issues */
+.custom-blog-content * {
+  all: revert;
+}
