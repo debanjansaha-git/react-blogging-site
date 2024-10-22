@@ -1,215 +1,149 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { getPosts } from '../services/blogService';
-import ProjectCard from '../components/ProjectCard';
-import { FaSearch, FaSort, FaFilter } from 'react-icons/fa';
+import ProjectList from '../components/ProjectList';
+import { FaSearch, FaSort, FaFilter, FaExpandAlt, FaCompressAlt } from 'react-icons/fa';
+import Select from 'react-select';
 
 function Projects() {
   const [projects, setProjects] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [message, setMessage] = useState('');
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [searchTerms, setSearchTerms] = useState([]);
-  const [sortOption, setSortOption] = useState('newest');
-  const [showSkillsFilter, setShowSkillsFilter] = useState(false);
-  const location = useLocation();
-  const skillsFilterRef = useRef(null);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortCriteria, setSortCriteria] = useState('date');
+  const [filterCriteria, setFilterCriteria] = useState([]);
+  const [expandAll, setExpandAll] = useState(false);
+  const [filterOptions, setFilterOptions] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
       const fetchedProjects = await getPosts();
       setProjects(fetchedProjects);
+      setFilteredProjects(fetchedProjects);
+      setLoading(false);
+
+      // Generate filter options
+      const domains = new Set(fetchedProjects.map(project => project.domain || 'Miscellaneous'));
+      const skills = new Set(fetchedProjects.flatMap(project => project.skills));
+      const options = [
+        { label: 'Domains', options: Array.from(domains).map(domain => ({ value: domain, label: domain, type: 'domain' })) },
+        { label: 'Skills', options: Array.from(skills).map(skill => ({ value: skill, label: skill, type: 'skill' })) }
+      ];
+      setFilterOptions(options);
     };
     fetchProjects();
+  }, []);
 
-    if (location.state && location.state.message) {
-      setMessage(location.state.message);
-      setTimeout(() => setMessage(''), 3000);
+  useEffect(() => {
+    let result = projects;
+
+    // Apply search
+    if (searchTerm) {
+      result = result.filter(project =>
+        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (project.domain && project.domain.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
     }
 
-    // Add click event listener to close the skills filter when clicking outside
-    const handleClickOutside = (event) => {
-      if (skillsFilterRef.current && !skillsFilterRef.current.contains(event.target)) {
-        setShowSkillsFilter(false);
-      }
-    };
+    // Apply filter
+    if (filterCriteria.length > 0) {
+      result = result.filter(project => 
+        filterCriteria.some(criteria => 
+          (criteria.type === 'domain' && project.domain === criteria.value) ||
+          (criteria.type === 'skill' && project.skills.includes(criteria.value))
+        )
+      );
+    }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [location]);
-
-  const allSkills = [...new Set(projects.flatMap(project => project.skills))];
-
-  const filteredProjects = projects.filter(project => {
-    const matchesSearchTerms = searchTerms.length === 0 || searchTerms.some(term => 
-      project.title.toLowerCase().includes(term.toLowerCase()) ||
-      project.skills.some(skill => skill.toLowerCase().includes(term.toLowerCase())) ||
-      project.content.toLowerCase().includes(term.toLowerCase())
-    );
-
-    const matchesSelectedSkills = selectedSkills.length === 0 || 
-      selectedSkills.every(skill => project.skills.includes(skill));
-
-    return matchesSearchTerms && matchesSelectedSkills;
-  });
-
-  const sortedProjects = [...filteredProjects].sort((a, b) => {
-    switch (sortOption) {
-      case 'title':
+    // Apply sort
+    result.sort((a, b) => {
+      if (sortCriteria === 'date') {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sortCriteria === 'title') {
         return a.title.localeCompare(b.title);
-      case 'oldest':
-        return a.createdAt.toMillis() - b.createdAt.toMillis();
-      case 'newest':
-        return b.createdAt.toMillis() - a.createdAt.toMillis();
-      default:
-        return 0;
-    }
-  });
+      }
+      return 0;
+    });
 
-  const handleSkillChange = (skill) => {
-    setSelectedSkills(prevSkills => 
-      prevSkills.includes(skill)
-        ? prevSkills.filter(s => s !== skill)
-        : [...prevSkills, skill]
-    );
+    setFilteredProjects(result);
+  }, [searchTerm, sortCriteria, filterCriteria, projects]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
+  const handleSort = (criteria) => {
+    setSortCriteria(criteria);
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    const terms = searchQuery.split(' ').filter(term => term.trim() !== '');
-    setSearchTerms(terms);
+  const handleFilter = (selectedOptions) => {
+    setFilterCriteria(selectedOptions);
   };
 
-  const handleSearchTermRemove = (term) => {
-    setSearchTerms(prevTerms => prevTerms.filter(t => t !== term));
-    setSearchQuery(prevQuery => prevQuery.replace(term, '').trim());
+  const toggleExpandAll = () => {
+    setExpandAll(!expandAll);
   };
 
-  const handleClearAllFilters = () => {
-    setSelectedSkills([]);
-    setSearchTerms([]);
-    setSearchQuery('');
-  };
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+    </div>;
+  }
 
   return (
-    <div className="projects-page bg-gray-100 min-h-screen pt-20 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {message && (
-          <div className="mb-4 p-4 bg-blue-100 text-blue-700 rounded-lg shadow">
-            {message}
-          </div>
-        )}
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">My Projects</h1>
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <div className="flex flex-col md:flex-row items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-            <form onSubmit={handleSearchSubmit} className="relative flex-grow w-full md:w-auto">
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full p-3 pl-10 pr-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <FaSearch className="text-gray-400" />
-              </button>
-            </form>
-            <div className="flex items-center space-x-4 w-full md:w-auto">
-              <div className="relative flex-grow md:flex-grow-0" ref={skillsFilterRef}>
-                <button
-                  onClick={() => setShowSkillsFilter(!showSkillsFilter)}
-                  className="w-full bg-white border border-gray-300 p-3 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
-                >
-                  <span>{selectedSkills.length ? `${selectedSkills.length} selected` : 'Filter by skills'}</span>
-                  <FaFilter className="text-gray-400" />
-                </button>
-                {showSkillsFilter && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-                    {allSkills.map((skill) => (
-                      <label key={skill} className="flex items-center p-2 hover:bg-gray-100">
-                        <input
-                          type="checkbox"
-                          checked={selectedSkills.includes(skill)}
-                          onChange={() => handleSkillChange(skill)}
-                          className="mr-2"
-                        />
-                        {skill}
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="relative flex-grow md:flex-grow-0">
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  className="appearance-none w-full bg-white border border-gray-300 p-3 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="newest">Newest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="title">Title</option>
-                </select>
-                <FaSort className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-          {(selectedSkills.length > 0 || searchTerms.length > 0) && (
-            <div className="mb-4 flex flex-wrap items-center bg-blue-50 p-3 rounded-lg">
-              <span className="mr-2 text-blue-700">Filtered by:</span>
-              {selectedSkills.map(skill => (
-                <span key={skill} className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm font-semibold mr-2 mb-2">
-                  {skill}
-                  <button 
-                    onClick={() => handleSkillChange(skill)}
-                    className="ml-1 text-blue-600 hover:text-blue-800 font-bold"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-              {searchTerms.map(term => (
-                <span key={term} className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-sm font-semibold mr-2 mb-2">
-                  {term}
-                  <button 
-                    onClick={() => handleSearchTermRemove(term)}
-                    className="ml-1 text-green-600 hover:text-green-800 font-bold"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-              <button 
-                onClick={handleClearAllFilters}
-                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sortedProjects.map((project) => (
-            <ProjectCard 
-              key={project.id} 
-              {...project} 
-              slug={project.slug}
-              imageUrl={project.imageUrl}
-              onSkillClick={handleSkillChange}
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">My Projects</h1>
+      <div className="mb-6 bg-white shadow-md rounded-lg p-4">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              placeholder="Search projects..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
             />
-          ))}
-        </div>
-        {sortedProjects.length === 0 && (
-          <div className="text-center text-gray-600 mt-8">
-            No projects found. Try adjusting your search or filters.
+            <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
-        )}
+          <div className="flex items-center">
+            <FaSort className="mr-2 text-gray-600" />
+            <select
+              value={sortCriteria}
+              onChange={(e) => handleSort(e.target.value)}
+              className="border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="date">Date</option>
+              <option value="title">Title</option>
+            </select>
+          </div>
+          <div className="flex-grow">
+            <div className="flex items-center">
+              <FaFilter className="mr-2 text-gray-600" />
+              <Select
+                isMulti
+                options={filterOptions}
+                onChange={handleFilter}
+                className="w-full"
+                placeholder="Filter by domain or skill..."
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    minHeight: '38px',
+                  }),
+                }}
+              />
+            </div>
+          </div>
+          <button
+            onClick={toggleExpandAll}
+            className="w-full md:w-auto flex items-center justify-center bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+          >
+            {expandAll ? <FaCompressAlt className="mr-2" /> : <FaExpandAlt className="mr-2" />}
+            {expandAll ? 'Collapse All' : 'Expand All'}
+          </button>
+        </div>
       </div>
+      <ProjectList projects={filteredProjects} expandAll={expandAll} />
     </div>
   );
 }

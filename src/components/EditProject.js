@@ -18,6 +18,7 @@ function EditProject() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [mediumUrl, setMediumUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [domain, setDomain] = useState('');
   const navigate = useNavigate();
   const { slug } = useParams();
 
@@ -34,6 +35,7 @@ function EditProject() {
         setYoutubeUrl(projectData.youtubeUrl || '');
         setMediumUrl(projectData.mediumUrl || '');
         setGithubUrl(projectData.githubUrl || '');
+        setDomain(projectData.domain || 'Miscellaneous');
       } else {
         console.log("No such document!");
         navigate('/projects');
@@ -107,6 +109,7 @@ function EditProject() {
         youtubeUrl,
         mediumUrl,
         githubUrl,
+        domain: domain || 'Miscellaneous',
         updatedAt: new Date(),
       };
       
@@ -208,6 +211,17 @@ function EditProject() {
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="domain" className="block text-gray-700 font-bold mb-2">Domain</label>
+            <input
+              type="text"
+              id="domain"
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g., Healthcare, Retail, or leave blank for Miscellaneous"
             />
           </div>
           <div className="flex justify-end space-x-4">
