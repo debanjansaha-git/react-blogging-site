@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { createPost } from '../services/blogService';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../firebase';
-import { createPost } from '../services/blogService';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DOMPurify from 'dompurify';
 
 function CreateProject() {
   const [title, setTitle] = useState('');
@@ -16,6 +17,7 @@ function CreateProject() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [mediumUrl, setMediumUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
+  const [domain, setDomain] = useState(''); // New state for domain
   const navigate = useNavigate();
 
   const modules = {
@@ -30,6 +32,24 @@ function CreateProject() {
     ],
   };
 
+  const cleanupContent = (html) => {
+    // Use DOMPurify to sanitize the HTML
+    let clean = DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'img'],
+      ALLOWED_ATTR: ['href', 'src', 'alt']
+    });
+
+    // Remove empty paragraphs and excessive line breaks
+    clean = clean.replace(/<p><br><\/p>/g, '');
+    clean = clean.replace(/<p>&nbsp;<\/p>/g, '');
+    clean = clean.replace(/(<br\s*\/?>){3,}/g, '<br><br>');
+
+    // Wrap loose text in paragraphs
+    clean = clean.replace(/^(?!<[p|ul|ol|h[1-6]]>)(.+)(?!<\/[p|ul|ol|h[1-6]]>)$/gm, '<p>$1</p>');
+
+    return clean;
+  };
+
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -40,34 +60,36 @@ function CreateProject() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let uploadedImageUrl = '';
+      let imageUrl = '';
       if (file) {
         const storageRef = ref(storage, `project-images/${Date.now()}-${file.name}`);
         const snapshot = await uploadBytes(storageRef, file);
-        uploadedImageUrl = await getDownloadURL(snapshot.ref);
+        imageUrl = await getDownloadURL(snapshot.ref);
       }
 
       const projectData = {
         title,
-        content,
+        content: cleanupContent(content),
         skills: skills.split(',').map(skill => skill.trim()),
-        imageUrl: uploadedImageUrl,
+        imageUrl,
         linkedinUrl,
         youtubeUrl,
         mediumUrl,
         githubUrl,
+        domain: domain || 'Miscellaneous', // Include domain in projectData
         createdAt: new Date(),
       };
+      
       const { slug } = await createPost(projectData);
-      navigate(`/projects/${slug}`);
+      navigate(`/projects/${slug}`, { state: { message: 'Project created successfully' } });
     } catch (error) {
       console.error('Error creating project:', error);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
-      <h2 className="text-3xl font-bold mb-8 text-center">Create New Project</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Create New Project</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="title" className="block text-gray-700 font-bold mb-2">Title</label>
@@ -149,6 +171,17 @@ function CreateProject() {
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label htmlFor="domain" className="block text-gray-700 font-bold mb-2">Domain</label>
+          <input
+            type="text"
+            id="domain"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., Healthcare, Retail, or leave blank for Miscellaneous"
           />
         </div>
         <div className="flex justify-end space-x-4">
