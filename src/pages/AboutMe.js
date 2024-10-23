@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Timeline from '../components/Timeline';
 
 function AboutMe() {
   const [name, setName] = useState('');
@@ -26,6 +27,11 @@ function AboutMe() {
         <p className="text-gray-700 leading-relaxed">
           My journey in the world of data science began [Your Journey]. Since then, I've worked on a variety of projects across different industries, always striving to push the boundaries of what's possible with data.
         </p>
+      </section>
+
+      <section className="mb-12 bg-white shadow-lg rounded-lg p-8">
+        <h2 className="text-2xl font-semibold mb-4 text-primary-700">My Experience</h2>
+        <Timeline />
       </section>
 
       <section className="mb-12 bg-white shadow-lg rounded-lg p-8">

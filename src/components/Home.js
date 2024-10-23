@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Typed from 'typed.js';
-import Timeline from './Timeline';
 import ProjectCard from './ProjectCard';
 import SocialMediaFeed from './SocialMediaFeed';
 import { getPosts } from '../services/blogService';
 import { FaPython, FaDatabase, FaChartBar, FaBrain } from 'react-icons/fa';
 import { SiTensorflow, SiPytorch, SiScikitlearn, SiKeras, SiOpencv, SiPandas, SiNumpy, SiJupyter } from 'react-icons/si';
+import { FaGithub, FaLinkedin, FaMedium } from 'react-icons/fa';
 
 function Home() {
   const [projects, setProjects] = useState([]);
+  const [animate, setAnimate] = useState(false);
   const typedRef = useRef(null);
   const el = useRef(null);
+  const skillsRef = useRef(null);
 
   const skills = [
     { name: 'Python', icon: FaPython, level: 95, color: '#3776AB' },
@@ -49,16 +51,33 @@ function Home() {
       });
     }
 
+    // Intersection Observer for skills animation
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAnimate(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (skillsRef.current) {
+      observer.observe(skillsRef.current);
+    }
+
     return () => {
       if (typedRef.current) {
         typedRef.current.destroy();
+      }
+      if (skillsRef.current) {
+        observer.unobserve(skillsRef.current);
       }
     };
   }, []);
 
   const handleResumeDownload = () => {
-    // Replace '/path-to-your-resume.pdf' with the actual path to your resume file
-    const resumeUrl = '/path-to-your-resume.pdf';
+    const resumeUrl = process.env.PUBLIC_URL + '/Debanjan_Saha_AI_Engineer_Resume.pdf';
     window.open(resumeUrl, '_blank');
   };
 
@@ -76,34 +95,43 @@ function Home() {
               <div className="flex space-x-4">
                 <Link to="/projects" className="btn-primary">
                   View My Projects
-          </Link>
-          <button onClick={handleResumeDownload} className="btn-secondary">
+                </Link>
+                <button onClick={handleResumeDownload} className="btn-secondary">
                   Download Resume
                 </button>
               </div>
             </div>
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center justify-center space-x-12">
               <img 
                 src={process.env.PUBLIC_URL + '/IMG_4712.JPG'} 
                 alt="Your professional headshot" 
                 className="rounded-full shadow-2xl" 
                 style={{width: '400px', height: '400px', objectFit: 'cover'}} 
               />
+              <div className="flex flex-col space-y-6">
+                <a href="https://github.com/debanjansaha-git" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-300 transition-all duration-300 transform hover:scale-110">
+                  <div className="bg-gray-800 p-4 rounded-full shadow-lg">
+                    <FaGithub size={60} />
+                  </div>
+                </a>
+                <a href="https://www.linkedin.com/in/debanjanaiml/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-300 transition-all duration-300 transform hover:scale-110">
+                  <div className="bg-blue-700 p-4 rounded-full shadow-lg">
+                    <FaLinkedin size={60} />
+                  </div>
+                </a>
+                <a href="https://dsdojo.medium.com/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-yellow-300 transition-all duration-300 transform hover:scale-110">
+                  <div className="bg-green-700 p-4 rounded-full shadow-lg">
+                    <FaMedium size={60} />
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section className="experience py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold mb-12 text-center">My Experience</h2>
-          <Timeline />
-        </div>
-      </section>
-
       {/* Skills Section */}
-      <section className="skills py-20 bg-gray-100">
+      <section ref={skillsRef} className="skills py-20 bg-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold mb-12 text-center text-gray-800">My AI/ML Skills</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
@@ -111,10 +139,13 @@ function Home() {
               <div key={index} className="flex flex-col items-center">
                 <skill.icon className="text-5xl mb-4" style={{ color: skill.color }} />
                 <p className="text-lg font-semibold mb-2">{skill.name}</p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                   <div 
-                    className="h-2.5 rounded-full" 
-                    style={{ width: `${skill.level}%`, backgroundColor: skill.color }}
+                    className="h-2.5 rounded-full transition-all duration-1000 ease-out"
+                    style={{ 
+                      width: animate ? `${skill.level}%` : '0%', 
+                      backgroundColor: skill.color 
+                    }}
                   ></div>
                 </div>
                 <p className="mt-2 text-sm font-medium text-gray-600">{skill.level}%</p>

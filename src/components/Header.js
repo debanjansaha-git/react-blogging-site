@@ -21,7 +21,7 @@ function Header() {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-bold">
-            <Link to="/" className="hover:text-yellow-300 transition duration-300">My Portfolio</Link>
+            <Link to="/" className="hover:text-yellow-300 transition duration-300">Debanjan Saha</Link>
           </div>
           <div className="flex space-x-6 items-center">
             <NavLink to="/" isActive={isActive('/')}>Home</NavLink>
