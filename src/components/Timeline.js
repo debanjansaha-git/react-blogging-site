@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FaBriefcase } from 'react-icons/fa';
 
 const experiences = [
   {

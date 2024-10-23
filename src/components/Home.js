@@ -41,9 +41,11 @@ function Home() {
     if (el.current) {
       typedRef.current = new Typed(el.current, {
         strings: [
-          "I'm a Data Scientist",
-          "I'm a Machine Learning Engineer",
-          "I'm passionate about solving complex problems"
+          "I'm passionate about solving complex problems using AI",
+          "I'm a AI Engineering Evangelist",
+          "I'm a Senior Applied Scientist",
+          "I'm a Senior Machine Learning Engineer",
+          "I'm a Solutions Architect"
         ],
         typeSpeed: 50,
         backSpeed: 50,
@@ -62,16 +64,17 @@ function Home() {
       { threshold: 0.1 }
     );
 
-    if (skillsRef.current) {
-      observer.observe(skillsRef.current);
+    const currentSkillsRef = skillsRef.current;
+    if (currentSkillsRef) {
+      observer.observe(currentSkillsRef);
     }
 
     return () => {
       if (typedRef.current) {
         typedRef.current.destroy();
       }
-      if (skillsRef.current) {
-        observer.unobserve(skillsRef.current);
+      if (currentSkillsRef) {
+        observer.unobserve(currentSkillsRef);
       }
     };
   }, []);
